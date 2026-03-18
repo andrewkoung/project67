@@ -57,7 +57,7 @@ public class App {
         app.after(ctx -> {
             String method = ctx.method().name();
             String path = ctx.path();
-            int status = ctx.status();
+            int status = ctx.status().getCode();
             LoggerFactory.getLogger("http").info("{} {} -> {}", method, path, status);
         });
 

@@ -10,6 +10,37 @@ Features:
 - Structured logging
 - Dockerized build and run
 
+## Quick start
+
+Run locally (no Docker):
+1) Install Java 24 and Maven 3.9+
+2) Build the jar:
+   - mvn package
+3) Start the API:
+   - java -jar target/wise-quotes-api.jar
+4) Verify it’s running:
+   - curl http://localhost:8080/health
+   - curl http://localhost:8080/api/v1/quotes/random
+
+Run with Docker:
+1) Build the image:
+   - docker build -t wise-quotes-api .
+2) Start a container:
+   - docker run --rm -p 8080:8080 wise-quotes-api
+3) Verify:
+   - curl http://localhost:8080/health
+   - curl http://localhost:8080/api/v1/quotes/random
+
+Change the port (example: 9090):
+- APP_PORT=9090 java -jar target/wise-quotes-api.jar
+- Or with Docker: docker run --rm -e APP_PORT=9090 -p 9090:9090 wise-quotes-api
+
+Create a quote (example):
+- curl -X POST -H "Content-Type: application/json" -d '{"text":"Stay hungry, stay foolish","author":"Steve Jobs"}' http://localhost:8080/api/v1/quotes
+
+Stop the app:
+- Press Ctrl+C in the terminal where it’s running (or stop the Docker container).
+
 ## Build and Run
 
 Prerequisites:

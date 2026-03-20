@@ -104,4 +104,5 @@ public class App {
         new ProcessorMetrics().bindTo(registry);
         new UptimeMetrics().bindTo(registry);
     }
+
 }

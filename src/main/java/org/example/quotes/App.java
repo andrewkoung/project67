@@ -29,7 +29,7 @@ public class App {
         AppConfig cfg = new AppConfig();
 
         // Logging baseline
-        Logger root = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+        Logger root = (Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
         root.setLevel(Level.INFO);
 
         // Metrics

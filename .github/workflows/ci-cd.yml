@@ -30,7 +30,7 @@ jobs:
       - name: Build JAR
         run: mvn -B package -DskipTests
 
-  build-and-push:
+  build:
     needs: test
     runs-on: ubuntu-latest
     name: Build and Push Docker Image
@@ -75,3 +75,13 @@ jobs:
           cache-to: type=gha,mode=max
           provenance: false
           sbom: false
+
+  sonarqube:
+    needs: [test, build]
+    runs-on: ubuntu-latest
+    name: SonarQube
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+

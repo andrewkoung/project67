@@ -34,7 +34,7 @@ public class App {
 
         // Metrics
         PrometheusMeterRegistry prometheus = new PrometheusMeterRegistry(PrometheusConfig.DEFAULT);
-        bindSystemMetrics(prometheus);
+        AutoCloseable metricsHandle = bindSystemMetrics(prometheus);
 
         // Core components
         QuoteRepository repo = new QuoteRepository();
@@ -91,18 +91,67 @@ public class App {
         // Graceful shutdown hook
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             try {
+                if (metricsHandle != null) {
+                    metricsHandle.close();
+                }
+            } catch (Exception ignored) {
+            }
+            try {
+                prometheus.close();
+            } catch (Exception ignored) {
+            }
+            try {
                 app.stop();
             } catch (Exception ignored) {
             }
         }));
     }
 
-    private static void bindSystemMetrics(MeterRegistry registry) {
-        new ClassLoaderMetrics().bindTo(registry);
-        new JvmMemoryMetrics().bindTo(registry);
-        new JvmGcMetrics().bindTo(registry);
-        new ProcessorMetrics().bindTo(registry);
-        new UptimeMetrics().bindTo(registry);
+    private static AutoCloseable bindSystemMetrics(MeterRegistry registry) {
+        ClassLoaderMetrics cl = new ClassLoaderMetrics();
+        JvmMemoryMetrics mem = new JvmMemoryMetrics();
+        JvmGcMetrics gc = new JvmGcMetrics();
+        ProcessorMetrics cpu = new ProcessorMetrics();
+        UptimeMetrics up = new UptimeMetrics();
+
+        cl.bindTo(registry);
+        mem.bindTo(registry);
+        gc.bindTo(registry);
+        cpu.bindTo(registry);
+        up.bindTo(registry);
+
+        return () -> {
+            if (up instanceof AutoCloseable ac) {
+                try {
+                    ac.close();
+                } catch (Exception ignored) {
+                }
+            }
+            if (cpu instanceof AutoCloseable ac) {
+                try {
+                    ac.close();
+                } catch (Exception ignored) {
+                }
+            }
+            if (gc instanceof AutoCloseable ac) {
+                try {
+                    ac.close();
+                } catch (Exception ignored) {
+                }
+            }
+            if (mem instanceof AutoCloseable ac) {
+                try {
+                    ac.close();
+                } catch (Exception ignored) {
+                }
+            }
+            if (cl instanceof AutoCloseable ac) {
+                try {
+                    ac.close();
+                } catch (Exception ignored) {
+                }
+            }
+        };
     }
 
 }

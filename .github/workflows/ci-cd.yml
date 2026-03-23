@@ -94,6 +94,14 @@ jobs:
       - name: Build (compile) with Maven
         run: mvn -B -DskipTests package
 
+      - name: Upload JAR artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: wise-quotes-api-jar
+          path: target/wise-quotes-api.jar
+          if-no-files-found: error
+          retention-days: 7
+
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v7.0.0
         env:
